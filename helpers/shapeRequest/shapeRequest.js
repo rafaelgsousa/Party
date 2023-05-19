@@ -11,9 +11,16 @@ const shapeRegister = {
     shape: {
         name: yup.string().required(),
         email: yup.string().email().required(),
-        password: yup.string('The password must be a string').required(),
+        password: yup.string().required(),
         confirmPassword: yup.string().required().oneOf([yup.ref('password'), null], 'Passwords must match'),
     }
 }
 
-export { shapeLogin, shapeRegister };
+const updatePassword = {
+    shape: {
+        lastPassword: yup.string().required(),
+        newPassword: yup.string().required(),
+    }
+}
+
+export { shapeLogin, shapeRegister, updatePassword };

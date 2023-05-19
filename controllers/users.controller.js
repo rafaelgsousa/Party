@@ -1,10 +1,11 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import { ObjectId } from "mongoose";
 
 import checkString from "../helpers/checkString.js";
 import User from "../models/user.model.js";
-import { findByEmail, findById, updateById } from "../services/users.js";
+import { findUserByEmail, findUserById, findUserByIdNoPassword, updateUserById } from "../services/users.js";
 
 dotenv.config();
 
@@ -12,7 +13,7 @@ const register = async (req, res) => {
     try {
         const { name, email, password, confirmPassword } = req.body;
 
-        const checkEmail = await findByEmail(email);
+        const checkEmail = await findUserByEmail(email);
 
         if (password !== confirmPassword) {
             return res.status(400).json({ message: "Passwords do not match" });
@@ -56,13 +57,14 @@ const register = async (req, res) => {
 const login = async (req, res) => {    
     try {
         const { email, password } = req.body;
-        const user = await findByEmail(email);
+        const user = await findUserByEmail(email);
 
         if (!user) {
             return res.status(400).json({ message: "User not found" });
         }
 
-        const isMatch = bcrypt.compare(password, user.password);
+        const isMatch = bcrypt.compareSync(password, user.password);
+        console.log("🚀 ~ file: users.controller.js:67 ~ login ~ isMatch:", isMatch)
 
         if (!isMatch) {
             return res.status(400).json({ message: "Invalid credentials" });
@@ -85,7 +87,7 @@ const getUserById = async (req, res) => {
     try {
         const { id } = req.params;
 
-        const user = await findById(id);
+        const user = await findUserByIdNoPassword(id);
 
         if (!user) {
             return res.status(400).json({ message: "User not found" });
@@ -97,17 +99,17 @@ const getUserById = async (req, res) => {
     }
 }
 
-const updateUserById = async (req, res) => {
+const updateUserDataById = async (req, res) => {
     try {
         const { id } = req.params;
         const data = req.body;
-        const { user } = req;
+        const { user } = await req;
 
-        if (user._id !== id) {
+        if (`${user._id}` !== id) {
             return res.status(401).json({ message: "Unauthorized" });
         }
 
-        const result = await updateById(id, data);
+        const result = await updateUserById(id, data);
 
         if (!result) {
             return res.status(400).json({ message: "User not found" });
@@ -119,7 +121,38 @@ const updateUserById = async (req, res) => {
     }
 }
 
-const updatePasswordById = async (req, res) => {};
+const updateUserPasswordById = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { user } = req;
+        const { lastPassword, newPassword } = req.body;
+    
+        if (`${user._id}` !== id) {
+            return res.status(401).json({ message: "Unauthorized" });
+        }
+    
+        const checkUser = await findUserById(id);
+    
+        const checkPassword = bcrypt.compareSync(lastPassword, checkUser.password);
+    
+        if (!checkPassword) {
+            return res.status(400).json({ message: "Invalid credentials" });
+        }
+    
+        const salt = await bcrypt.genSalt(12);
+        const password = await bcrypt.hash(newPassword, salt);
+    
+        const result = await updateUserById(id, { password });
+    
+        if (!result) {
+            return res.status(400).json({ message: "User not found" });
+        }
+    
+        return res.status(200).json({ message: "Update password successfully" });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+};
 
 
-export { register, login, getUserById, updateUserById, updatePasswordById };
+export { register, login, getUserById, updateUserDataById, updateUserPasswordById };

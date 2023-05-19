@@ -1,11 +1,11 @@
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 
-import { findById } from '../services/users.js';
+import { findUserByIdNoPassword } from '../services/users.js';
 
 dotenv.config();
 
-const authorizationCheck = (req, res, next) => {
+const authorizationCheck = async (req, res, next) => {
     try {
         const token = req.headers.authorization.split(' ')[1];
     
@@ -19,7 +19,7 @@ const authorizationCheck = (req, res, next) => {
             return res.status(401).json({ message: "Unauthorized" });
         }
 
-        const user = findById(verify._id);
+        const user = await findUserByIdNoPassword(verify._id);
 
         req.user = user;
 
