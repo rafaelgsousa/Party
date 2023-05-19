@@ -4,7 +4,7 @@ import bodyParser from "body-parser";
 import cors from "cors";
 
 import db from "./db/connect.js";
-import router from "./routes/user.route.js";
+import router from "./routes/index.route.js";
 
 dotenv.config();
 

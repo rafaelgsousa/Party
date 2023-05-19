@@ -1,11 +1,9 @@
 import { Router } from "express";
 
-import Party from "../models/party.model.js";
-
 const router = Router();
 
 router.get("/", (_req, res) => {
-    res.send("Hello World");
+    return res.send("Hello World");
 }
 );
 
