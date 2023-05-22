@@ -7,7 +7,6 @@ const requestCheck = ({ shape }) => async (req, res, next) => {
       await schema.validate(req.body);
       return next();
     } catch (error) {
-      console.log("🚀 ~ file: requestCheck.middleware.js:12 ~ requestCheck ~ error:", error);
       return res.status(500).json({ message: error.message });
     }
   };

@@ -64,7 +64,6 @@ const login = async (req, res) => {
         }
 
         const isMatch = bcrypt.compareSync(password, user.password);
-        console.log("🚀 ~ file: users.controller.js:67 ~ login ~ isMatch:", isMatch)
 
         if (!isMatch) {
             return res.status(400).json({ message: "Invalid credentials" });

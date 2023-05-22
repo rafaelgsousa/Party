@@ -6,7 +6,7 @@ import partyRoutes from './party.route.js'
 
 const router = Router();
 
-router.use('', authRoutes);
+router.use('/', authRoutes);
 router.use('/user', useRoutes);
 router.use('/party', partyRoutes);
 

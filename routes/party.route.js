@@ -1,10 +1,23 @@
 import { Router } from "express";
 
+import auth from "../middlewares/authorizationCheck.middleware.js";
+import requestCheck from "../middlewares/requestCheck.middleware.js";
+import { upload } from "../helpers/file-storage.js";
+import { createParty, getParties, getPartiesPublics, getParty, getPartyPublic, deleteParty } from "../controllers/party.controller.js";
+import { shapeParty } from "../helpers/shapeRequest/shapeRequest.js";
+
 const router = Router();
 
-router.get("/", (_req, res) => {
-    return res.send("Hello World");
-}
-);
+router.post("/", auth, requestCheck(shapeParty), upload.fields([{ name: 'photos' }]), createParty);
+
+router.get("/:id", auth, getParties);
+
+router.get('/userparty/:id', auth, getParty);
+
+router.get("/public", getPartiesPublics);
+
+router.get('/publicparty/:id', getPartyPublic);
+
+router.delete("/", auth, deleteParty);
 
 export default router;

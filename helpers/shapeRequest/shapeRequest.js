@@ -23,4 +23,13 @@ const updatePassword = {
     }
 }
 
-export { shapeLogin, shapeRegister, updatePassword };
+const shapeParty = {
+    shape: {
+        title: yup.string().required(),
+        description: yup.string().required(),
+        date: yup.string().required().default(new Date()),
+        privacy: yup.boolean().required().default(false),
+    }
+}
+
+export { shapeLogin, shapeRegister, updatePassword, shapeParty };

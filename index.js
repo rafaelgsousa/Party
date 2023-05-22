@@ -16,7 +16,7 @@ app.use(express.json());
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use('/', router);
+app.use('/api', router);
 
 try {
     db.once("open", () => {
