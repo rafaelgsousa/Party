@@ -1,6 +1,3 @@
-import jwt from "jsonwebtoken";
-import multer from "multer";
-
 import Party from "../models/party.model.js";
 import User from "../models/user.model.js";
 import { diskStorage } from "../helpers/file-storage.js";
@@ -69,13 +66,12 @@ const getParties = async (req, res) => {
     }
 }
 
-const getPartiesPublics = async (_req, res) => {
+const getPublicParties = async (_req, res) => {
     try {
         const parties = await getPartiesNotPrivate();
 
         return res.status(200).json({ message: "Public parties!", data: parties });
     } catch (error) {
-        console.log("🚀 ~ file: party.controller.js:79 ~ getPartiesPublics ~ error:", error)
         return res.status(500).json({ message: error.message });
     }
 }
@@ -144,4 +140,4 @@ const deleteParty = async (req, res) => {
     }
 }
 
-export { createParty, getParties, getPartiesPublics, getParty, getPartyPublic, deleteParty };
+export { createParty, getParties, getPublicParties, getParty, getPartyPublic, deleteParty };
